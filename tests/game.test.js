@@ -318,3 +318,46 @@ describe('symbol representation contract', () => {
     expect(result.winner).toBe('X');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Score helpers
+// ---------------------------------------------------------------------------
+
+describe('createInitialScore', () => {
+  test('starts with { X: 0, O: 0 }', () => {
+    expect(createInitialScore()).toEqual({ X: 0, O: 0 });
+  });
+
+  test('returns a new object each time', () => {
+    const s1 = createInitialScore();
+    const s2 = createInitialScore();
+    expect(s1).not.toBe(s2);
+  });
+});
+
+describe('applyWinToScore', () => {
+  test('increments X score when winner is X', () => {
+    const score = { X: 0, O: 0 };
+    const next = applyWinToScore(score, 'X');
+    expect(next).toEqual({ X: 1, O: 0 });
+  });
+
+  test('increments O score when winner is O', () => {
+    const score = { X: 2, O: 1 };
+    const next = applyWinToScore(score, 'O');
+    expect(next).toEqual({ X: 2, O: 2 });
+  });
+
+  test('does not change score on draw (winner null)', () => {
+    const score = { X: 1, O: 1 };
+    const next = applyWinToScore(score, null);
+    expect(next).toBe(score);
+  });
+
+  test('does not mutate the original score object when incrementing', () => {
+    const score = { X: 0, O: 0 };
+    const next = applyWinToScore(score, 'X');
+    expect(score).toEqual({ X: 0, O: 0 });
+    expect(next).not.toBe(score);
+  });
+});

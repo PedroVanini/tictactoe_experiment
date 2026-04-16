@@ -6,6 +6,8 @@
 const cells    = document.querySelectorAll('.cell');
 const status   = document.getElementById('status');
 const restartBtn     = document.getElementById('restart');
+const scoreXEl = document.getElementById('score-x');
+const scoreOEl = document.getElementById('score-o');
 
 const PLAYER_EMOJIS = {
   X: '🐱',
@@ -13,9 +15,15 @@ const PLAYER_EMOJIS = {
 };
 
 let state = createInitialState();
+let score = createInitialScore();
 
 function toDisplaySymbol(player) {
   return PLAYER_EMOJIS[player] || player;
+}
+
+function renderScore() {
+  if (scoreXEl) scoreXEl.textContent = String(score.X ?? 0);
+  if (scoreOEl) scoreOEl.textContent = String(score.O ?? 0);
 }
 
 function render() {
@@ -48,6 +56,8 @@ function handleClick(e) {
   if (result) {
     state.gameOver = true;
     if (result.winner) {
+      score = applyWinToScore(score, result.winner);
+      renderScore();
       result.combo.forEach(i => cells[i].classList.add('winning'));
       setStatus(`Player ${toDisplaySymbol(result.winner)} wins!`, 'win');
     } else {
@@ -73,4 +83,5 @@ restartBtn.addEventListener('click', restartGame);
 
 // Initial render
 render();
+renderScore();
 setStatus(`Player ${toDisplaySymbol(state.current)}'s turn`);
